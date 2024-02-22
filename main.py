@@ -73,6 +73,9 @@ def search_sample(
             include_citations=True,
             ignore_adversarial_query=True,
             ignore_non_summary_seeking_query=True,
+            # model_prompt_spec=discoveryengine.SearchRequest.ContentSearchSpec.SummarySpec.ModelPromptSpec(
+            #     preamble="answer nicely please"
+            # ),
         ),
     )
 
@@ -120,19 +123,19 @@ def search_sample(
 
     return json_list, summary
 
-# @app.get("/", response_class=HTMLResponse)
-# def read_root():
-#     html_content = """
-#     <html>
-#         <body>
-#             <form action="/search" method="post">
-#                 Enter your query: <input type="text" name="q" value="apakah Prosedur Permintaan Layanan Interkoneksi?">
-#                 <input type="submit" value="Submit">
-#             </form>
-#         </body>
-#     </html>
-#     """
-#     return HTMLResponse(content=html_content)
+@app.get("/", response_class=HTMLResponse)
+def read_root():
+    html_content = """
+    <html>
+        <body>
+            <form action="/search" method="post">
+                Enter your query: <input type="text" name="q" value="apakah Prosedur Permintaan Layanan Interkoneksi?">
+                <input type="submit" value="Submit">
+            </form>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 class QueryInput(BaseModel):
     message: str
@@ -148,4 +151,6 @@ async def search(query_input: QueryInput):
         )
         return response
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = f"An error occurred: {str(e)}"
+        print(error_msg)  # Log the error message for debugging
+        raise HTTPException(status_code=500, detail=error_msg)
